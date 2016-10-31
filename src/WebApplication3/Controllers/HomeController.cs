@@ -102,10 +102,37 @@ namespace WebApplication3.Controllers
             return s;
         }
 
-        //TODO: update from the school downward
         public IActionResult Update()
         {
-            // update student, courses and studentCourses all at once
+            //Get the 'Great' school and include students, courses and studentCourses
+            var school = _context.Schools.
+                Include(s => s.Students)
+                    .ThenInclude(s => s.StudentCourses)
+                        .ThenInclude(s => s.Course)
+                .FirstOrDefault(s => s.Name.Contains("Great"));
+
+
+            school.Name = "Excelent school";
+
+            //edit every student
+            foreach (var student in school.Students)
+            {
+                student.Name = student.Name + " edited";
+                //edit every student course
+                foreach (var sc in student.StudentCourses)
+                {
+                    sc.Course.Name = sc.Course.Name + " edited";
+                }
+            }
+
+            _context.Schools.Update(school);
+            _context.SaveChanges();
+
+            return View("Index");
+        }
+
+        public IActionResult UpdateFromStudent()
+        {
             var student = _context.Students
                 .Include(s => s.StudentCourses)
                     .ThenInclude(s => s.Course)
@@ -127,6 +154,7 @@ namespace WebApplication3.Controllers
             _context.SaveChanges();
 
             return View("Index");
+
         }
 
         public IActionResult Delete()

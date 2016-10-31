@@ -83,6 +83,7 @@ namespace WebApplication3.Controllers
             return View("Index");
         }
 
+        //TODO: Use StringBuilder
         string Flatten(IEnumerable<School> schools)
         {
             string s = "";
@@ -101,6 +102,7 @@ namespace WebApplication3.Controllers
             return s;
         }
 
+        //TODO: update from the school downward
         public IActionResult Update()
         {
             // update student, courses and studentCourses all at once
@@ -129,7 +131,9 @@ namespace WebApplication3.Controllers
 
         public IActionResult Delete()
         {
+            //By removing the schools we also remove the students and the record needed to join students with courses
             _context.RemoveRange(_context.Schools);
+            //The courses aren't removed with the schools
             _context.RemoveRange(_context.Courses);
             _context.SaveChanges();
             return View("Index");
